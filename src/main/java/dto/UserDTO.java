@@ -10,12 +10,12 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class UserDTO {
-    private String mEmail;
-    private String mFirstName;
-    private String mId;
-    private String mLastName;
-    private String mPassword;
-    private String mPhone;
-    private Long mUserStatus;
-    private String mUsername;
+    private String email;
+    private String firstName;
+    private String id;
+    private String lastName;
+    private String password;
+    private String phone;
+    private Long userStatus;
+    private String username;
 }

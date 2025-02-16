@@ -1,54 +1,73 @@
 import org.apache.http.HttpStatus;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import services.PetStorePetApi;
 import dto.PetDTO;
 import utils.Specs;
+import utils.PetTestDataGenerator;
+import java.util.stream.Stream;
 
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 import static org.hamcrest.Matchers.equalTo;
 
+/**
+ * Тесты проверяют:
+ * 1. Создание питомца с различными параметрами.
+ * 2. Получение данных питомца по его ID.
+ * Для каждого теста выполняется очистка данных (удаление созданного питомца).
+ */
+
 public class PetTests {
 
   private PetStorePetApi petStoreApi;
-  private PetDTO pet;
 
   @BeforeEach
   public void setUp() {
     petStoreApi = new PetStorePetApi();
-    pet = PetDTO.builder()
-        .id(12345L)
-        .name("Buddy")
-        .status("available")
-        .build();
   }
 
-  @Test
-  public void createPetTest() {
-    // Проверяем, что питомец успешно создается и возвращается корректный ответ
+  private static Stream<Arguments> providePetData() {
+    return Stream.of(
+        Arguments.of(12345L, "Buddy", "available"),
+        Arguments.of(67890L, "Max", "pending"),
+        Arguments.of(11111L, "Charlie", "sold")
+    );
+  }
+
+  @ParameterizedTest
+  @MethodSource("providePetData")
+  public void createPetTest(Long id, String name, String status) {
+    PetDTO pet = PetTestDataGenerator.createPet(id, name, status);
+
     petStoreApi.createPet(pet)
         .spec(Specs.responseSpec(HttpStatus.SC_OK))
         .body(matchesJsonSchemaInClasspath("Schema/CreatePet.json"))
-        .body("id", equalTo(12345))
-        .body("name", equalTo("Buddy"))
-        .body("status", equalTo("available"));
+        .body("id", equalTo(id.intValue()))
+        .body("name", equalTo(name))
+        .body("status", equalTo(status));
+
+    petStoreApi.deletePet(pet.getId());
   }
 
   @Test
   public void findPetByIdTest() {
-    // Проверяем, что питомец успешно находится по ID
+    Long petId = 12345L;
+    String petName = "Buddy";
+    String petStatus = "available";
+
+    PetDTO pet = PetTestDataGenerator.createPet(petId, petName, petStatus);
+
     petStoreApi.createPet(pet);
+
     petStoreApi.findPetById(pet.getId())
         .spec(Specs.responseSpec(HttpStatus.SC_OK))
-        .body("id", equalTo(12345))
-        .body("name", equalTo("Buddy"))
-        .body("status", equalTo("available"));
-  }
+        .body("id", equalTo(petId.intValue()))
+        .body("name", equalTo(petName))
+        .body("status", equalTo(petStatus));
 
-  @AfterEach
-  public void tearDown() {
-    // Удаляем питомца после каждого теста
     petStoreApi.deletePet(pet.getId());
   }
 }

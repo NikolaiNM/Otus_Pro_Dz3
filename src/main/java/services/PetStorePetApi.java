@@ -10,20 +10,20 @@ import static io.restassured.RestAssured.given;
 
 public class PetStorePetApi {
 
-  private RequestSpecification spec;
+  private final RequestSpecification SPEC;
   private static final String BASE_URL = "https://petstore.swagger.io/v2";
   private static final String PET_PATH = "/pet";
 
   public PetStorePetApi() {
-    spec = given()
-        .spec(Specs.requestSpec()) // Используем RequestSpecification
+    SPEC = given()
+        .spec(Specs.requestSpec())
         .baseUri(BASE_URL)
         .contentType(ContentType.JSON)
         .log().all();
   }
 
   public ValidatableResponse createPet(PetDTO pet) {
-    return given(spec)
+    return given(SPEC)
         .body(pet)
         .basePath(PET_PATH)
         .when()
@@ -33,7 +33,7 @@ public class PetStorePetApi {
   }
 
   public ValidatableResponse findPetById(long petId) {
-    return given(spec)
+    return given(SPEC)
         .basePath(PET_PATH + "/{petId}")
         .pathParam("petId", petId)
         .when()
@@ -43,7 +43,7 @@ public class PetStorePetApi {
   }
 
   public ValidatableResponse deletePet(long petId) {
-    return given(spec)
+    return given(SPEC)
         .basePath(PET_PATH + "/{petId}")
         .pathParam("petId", petId)
         .when()

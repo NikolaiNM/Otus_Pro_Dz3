@@ -6,6 +6,8 @@ import services.PetStorePetApi;
 import dto.PetDTO;
 import utils.Specs;
 
+import java.util.List;
+
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -21,6 +23,9 @@ public class PetTests {
         .id(12345L)
         .name("Buddy")
         .status("available")
+        .category(PetDTO.CategoryDTO.builder().id(1L).name("Dogs").build())
+        .photoUrls(List.of("url1", "url2"))
+        .tags(List.of(PetDTO.TagDTO.builder().id(1L).name("tag1").build()))
         .build();
   }
 

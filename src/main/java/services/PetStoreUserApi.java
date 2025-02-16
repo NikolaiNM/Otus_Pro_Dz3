@@ -10,21 +10,20 @@ import static io.restassured.RestAssured.given;
 
 public class PetStoreUserApi {
 
-  private RequestSpecification spec;
+  private final RequestSpecification SPEC;
   private static final String BASE_URL = "https://petstore.swagger.io/v2";
   private static final String USER_PATH = "/user";
-  private static final String DELETE_USER = "/{username}";
 
   public PetStoreUserApi() {
-    spec = given()
-        .spec(Specs.requestSpec()) // Используем RequestSpecification
+    SPEC = given()
+        .spec(Specs.requestSpec())
         .baseUri(BASE_URL)
         .contentType(ContentType.JSON)
         .log().all();
   }
 
   public ValidatableResponse createUser(UserDTO user) {
-    return given(spec)
+    return given(SPEC)
         .body(user)
         .basePath(USER_PATH)
         .when()
@@ -34,7 +33,7 @@ public class PetStoreUserApi {
   }
 
   public ValidatableResponse findUserByUsername(String username) {
-    return given(spec)
+    return given(SPEC)
         .basePath(USER_PATH + "/{username}")
         .pathParam("username", username)
         .when()
@@ -43,9 +42,20 @@ public class PetStoreUserApi {
         .log().all();
   }
 
+  public ValidatableResponse updateUser(UserDTO user) {
+    return given(SPEC)
+        .body(user)
+        .basePath(USER_PATH + "/{username}")
+        .pathParam("username", user.getUsername()) // Исправлено: передаем username
+        .when()
+        .put()
+        .then()
+        .log().all();
+  }
+
   public ValidatableResponse deleteUser(String username) {
-    return given(spec)
-        .basePath(USER_PATH + DELETE_USER)
+    return given(SPEC)
+        .basePath(USER_PATH + "/{username}")
         .pathParam("username", username)
         .when()
         .delete()

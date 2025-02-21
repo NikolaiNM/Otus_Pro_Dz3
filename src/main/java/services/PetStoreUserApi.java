@@ -1,29 +1,15 @@
 package services;
-
-import dto.UserDTO;
-import io.restassured.http.ContentType;
-import io.restassured.response.ValidatableResponse;
-import io.restassured.specification.RequestSpecification;
-import utils.Specs;
-
 import static io.restassured.RestAssured.given;
 
-public class PetStoreUserApi {
+import dto.UserDTO;
+import io.restassured.response.ValidatableResponse;
 
-  private final RequestSpecification SPEC;
-  private static final String BASE_URL = "https://petstore.swagger.io/v2";
+public class PetStoreUserApi extends BaseApiClient {
+
   private static final String USER_PATH = "/user";
 
-  public PetStoreUserApi() {
-    SPEC = given()
-        .spec(Specs.requestSpec())
-        .baseUri(BASE_URL)
-        .contentType(ContentType.JSON)
-        .log().all();
-  }
-
   public ValidatableResponse createUser(UserDTO user) {
-    return given(SPEC)
+    return given(spec)
         .body(user)
         .basePath(USER_PATH)
         .when()
@@ -33,7 +19,7 @@ public class PetStoreUserApi {
   }
 
   public ValidatableResponse findUserByUsername(String username) {
-    return given(SPEC)
+    return given(spec)
         .basePath(USER_PATH + "/{username}")
         .pathParam("username", username)
         .when()
@@ -43,10 +29,10 @@ public class PetStoreUserApi {
   }
 
   public ValidatableResponse updateUser(UserDTO user) {
-    return given(SPEC)
+    return given(spec)
         .body(user)
         .basePath(USER_PATH + "/{username}")
-        .pathParam("username", user.getUsername()) // Исправлено: передаем username
+        .pathParam("username", user.getUsername())
         .when()
         .put()
         .then()
@@ -54,7 +40,7 @@ public class PetStoreUserApi {
   }
 
   public ValidatableResponse deleteUser(String username) {
-    return given(SPEC)
+    return given(spec)
         .basePath(USER_PATH + "/{username}")
         .pathParam("username", username)
         .when()

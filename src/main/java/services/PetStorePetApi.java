@@ -1,29 +1,15 @@
 package services;
-
-import dto.PetDTO;
-import io.restassured.http.ContentType;
-import io.restassured.response.ValidatableResponse;
-import io.restassured.specification.RequestSpecification;
-import utils.Specs;
-
 import static io.restassured.RestAssured.given;
 
-public class PetStorePetApi {
+import dto.PetDTO;
+import io.restassured.response.ValidatableResponse;
 
-  private final RequestSpecification SPEC;
-  private static final String BASE_URL = "https://petstore.swagger.io/v2";
+public class PetStorePetApi extends BaseApiClient {
+
   private static final String PET_PATH = "/pet";
 
-  public PetStorePetApi() {
-    SPEC = given()
-        .spec(Specs.requestSpec())
-        .baseUri(BASE_URL)
-        .contentType(ContentType.JSON)
-        .log().all();
-  }
-
   public ValidatableResponse createPet(PetDTO pet) {
-    return given(SPEC)
+    return given(spec)
         .body(pet)
         .basePath(PET_PATH)
         .when()
@@ -33,7 +19,7 @@ public class PetStorePetApi {
   }
 
   public ValidatableResponse findPetById(long petId) {
-    return given(SPEC)
+    return given(spec)
         .basePath(PET_PATH + "/{petId}")
         .pathParam("petId", petId)
         .when()
@@ -43,11 +29,24 @@ public class PetStorePetApi {
   }
 
   public ValidatableResponse deletePet(long petId) {
-    return given(SPEC)
+    return given(spec)
         .basePath(PET_PATH + "/{petId}")
         .pathParam("petId", petId)
         .when()
         .delete()
+        .then()
+        .log().all();
+  }
+
+  public ValidatableResponse updatePetWithFormData(long petId, String name, String status) {
+    return given(spec)
+        .basePath(PET_PATH + "/{petId}")
+        .pathParam("petId", petId)
+        .contentType("application/x-www-form-urlencoded")
+        .formParam("name", name)
+        .formParam("status", status)
+        .when()
+        .post()
         .then()
         .log().all();
   }

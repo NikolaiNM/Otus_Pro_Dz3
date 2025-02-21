@@ -37,4 +37,17 @@ public class PetStorePetApi extends BaseApiClient {
         .then()
         .log().all();
   }
+
+  public ValidatableResponse updatePetWithFormData(long petId, String name, String status) {
+    return given(spec)
+        .basePath(PET_PATH + "/{petId}")
+        .pathParam("petId", petId)
+        .contentType("application/x-www-form-urlencoded")
+        .formParam("name", name)
+        .formParam("status", status)
+        .when()
+        .post()
+        .then()
+        .log().all();
+  }
 }

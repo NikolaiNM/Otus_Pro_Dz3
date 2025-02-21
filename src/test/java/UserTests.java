@@ -1,3 +1,6 @@
+import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
+import static org.hamcrest.Matchers.equalTo;
+
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -7,14 +10,10 @@ import dto.UserDTO;
 import utils.Specs;
 import utils.UserTestDataGenerator;
 
-import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
-import static org.hamcrest.Matchers.equalTo;
-
 /**
  * Тесты проверяют:
- * 1. Пользователь успешно создается и возвращается корректный ответ.
- * 2. Созданного пользователя можно найти по его username и возвращаются корректные данные.
- * 3. Данные пользователя успешно изменяются и возвращается корректный ответ.
+ * 1. Создание пользователя и получение его данных по username.
+ * 2. Обновление данных пользователя и проверка изменений.
  * Для каждого теста выполняется очистка данных (удаление созданного пользователя).
  */
 public class UserTests {
@@ -35,17 +34,16 @@ public class UserTests {
   }
 
   @Test
-  public void createUserTest() {
+  public void createAndFindUserTest() {
+    UserDTO user = UserTestDataGenerator.createDefaultUser();
+
     petStoreApi.createUser(user)
         .spec(Specs.responseSpec(HttpStatus.SC_OK))
         .body(matchesJsonSchemaInClasspath("Schema/CreateUser.json"))
         .body("code", equalTo(200))
         .body("type", equalTo("unknown"))
         .body("message", equalTo("1122335566"));
-  }
 
-  @Test
-  public void findUserByUsernameTest() {
     petStoreApi.findUserByUsername(user.getUsername())
         .spec(Specs.responseSpec(HttpStatus.SC_OK))
         .body("username", equalTo("mytestuser"))

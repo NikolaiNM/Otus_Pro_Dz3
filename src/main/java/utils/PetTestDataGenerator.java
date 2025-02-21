@@ -1,7 +1,6 @@
 package utils;
 
 import dto.PetDTO;
-
 import java.util.List;
 
 public class PetTestDataGenerator {

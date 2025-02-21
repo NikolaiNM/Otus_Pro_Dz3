@@ -10,8 +10,11 @@ import utils.Specs;
 public class PetStorePetApi {
 
   private final RequestSpecification spec;
-  private static final String BASE_URL = "https://petstore.swagger.io/v2";
+
+
   private static final String PET_PATH = "/pet";
+  private static final String BASE_URL = System.getProperty("base.url");
+
 
   public PetStorePetApi() {
     spec = given()

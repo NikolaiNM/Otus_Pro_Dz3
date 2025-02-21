@@ -2,24 +2,11 @@ package services;
 import static io.restassured.RestAssured.given;
 
 import dto.UserDTO;
-import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
-import io.restassured.specification.RequestSpecification;
-import utils.Specs;
 
-public class PetStoreUserApi {
+public class PetStoreUserApi extends BaseApiClient {
 
-  private final RequestSpecification spec;
-  private static final String BASE_URL = System.getProperty("base.url");
   private static final String USER_PATH = "/user";
-
-  public PetStoreUserApi() {
-    spec = given()
-        .spec(Specs.requestSpec())
-        .baseUri(BASE_URL)
-        .contentType(ContentType.JSON)
-        .log().all();
-  }
 
   public ValidatableResponse createUser(UserDTO user) {
     return given(spec)
@@ -45,7 +32,7 @@ public class PetStoreUserApi {
     return given(spec)
         .body(user)
         .basePath(USER_PATH + "/{username}")
-        .pathParam("username", user.getUsername()) // Исправлено: передаем username
+        .pathParam("username", user.getUsername())
         .when()
         .put()
         .then()

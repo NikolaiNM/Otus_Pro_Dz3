@@ -2,27 +2,11 @@ package services;
 import static io.restassured.RestAssured.given;
 
 import dto.PetDTO;
-import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
-import io.restassured.specification.RequestSpecification;
-import utils.Specs;
 
-public class PetStorePetApi {
-
-  private final RequestSpecification spec;
-
+public class PetStorePetApi extends BaseApiClient {
 
   private static final String PET_PATH = "/pet";
-  private static final String BASE_URL = System.getProperty("base.url");
-
-
-  public PetStorePetApi() {
-    spec = given()
-        .spec(Specs.requestSpec())
-        .baseUri(BASE_URL)
-        .contentType(ContentType.JSON)
-        .log().all();
-  }
 
   public ValidatableResponse createPet(PetDTO pet) {
     return given(spec)

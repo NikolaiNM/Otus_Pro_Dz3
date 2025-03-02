@@ -17,7 +17,7 @@ public abstract class BaseApiClient {
         .log().all();
   }
 
-  protected String getBaseUrl() {
+  public static String getBaseUrl() {
     return System.getProperty("base.url");
   }
 }
